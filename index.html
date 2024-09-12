@@ -89,7 +89,7 @@
       <!-- Section untuk menampilkan daftar teman, awalnya tersembunyi -->
       <div
         id="daftar-teman"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 ml-8 hidden"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 hidden"
       >
         <!-- Daftar teman akan dimasukkan di sini -->
       </div>
@@ -129,7 +129,7 @@
             cardContainer.innerHTML = `
             <div class="bg-blue-500 h-48"></div>
             <div class="text-center p-8">
-              <img id="main-photo" class="w-60 h-60 object-cover rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${biodata.fotoformal}" alt="Foto Profil"> <!-- Foto utama bisa diklik -->
+              <img id="main-photo" class="w-44 h-44 object-cover rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${biodata.fotoformal}" alt="Foto Profil"> <!-- Foto utama bisa diklik -->
               <h2 class="text-2xl font-semibold mt-6">${biodata.nama}</h2>
               <p class="text-gray-600 mt-2">Kelompok: ${biodata.kelompok}</p>
               <p class="text-gray-600">NIM: ${biodata.nim}</p>
