@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biodata dan Daftar Teman</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Animasi spinner */
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #6366f1;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <!-- Container utama -->
+    <div class="container mx-auto p-4">
+      <!-- Header -->
+      <div class="text-center my-8">
+        <h1 class="text-4xl font-bold text-gray-800">Biodata</h1>
+      </div>
+
+      <!-- Card biodata -->
+      <div
+        id="biodata-card"
+        class="max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden"
+      >
+        <!-- Foto Profil dan Detail akan dimasukkan secara dinamis -->
+      </div>
+
+      <!-- Tombol untuk melihat daftar teman -->
+      <div class="text-center mt-8">
+        <button
+          id="lihat-teman-btn"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Lihat Daftar Teman
+        </button>
+        <div id="loading-spinner" class="hidden spinner mx-auto mt-4"></div>
+        <!-- Spinner animasi -->
+      </div>
+
+      <!-- Section untuk menampilkan daftar teman, awalnya tersembunyi -->
+      <div
+        id="daftar-teman"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 hidden"
+      >
+        <!-- Daftar teman akan dimasukkan di sini -->
+      </div>
+    </div>
+
+    <!-- Modal untuk menampilkan gambar besar -->
+    <div
+      id="photo-modal"
+      class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50"
+    >
+      <div class="relative">
+        <img
+          id="modal-img"
+          src=""
+          alt="Foto Besar"
+          class="max-w-full max-h-full rounded-lg"
+        />
+        <button
+          id="close-modal"
+          class="absolute top-2 right-2 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Fungsi untuk mengambil data JSON dan menampilkan biodata utama
+      fetch("data.json")
+        .then((response) => response.json())
+        .then((data) => {
+          // Cari data dengan id = 33 (biodata utama)
+          const biodata = data.find((item) => item.id === 33);
+
+          if (biodata) {
+            const cardContainer = document.getElementById("biodata-card");
+            cardContainer.innerHTML = `
+            <div class="bg-blue-500 h-48"></div>
+            <div class="text-center p-8">
+              <img id="main-photo" class="w-40 h-40 rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${biodata.fotoformal}" alt="Foto Profil"> <!-- Foto utama bisa diklik -->
+              <h2 class="text-2xl font-semibold mt-6">${biodata.nama}</h2>
+              <p class="text-gray-600 mt-2">Kelompok: ${biodata.kelompok}</p>
+              <p class="text-gray-600">NIM: ${biodata.nim}</p>
+              <div class="mt-6">
+                <p><span class="font-bold">TTL:</span> ${biodata.ttl}</p>
+                <p><span class="font-bold">Alamat:</span> ${biodata.alamat}</p>
+                <p><span class="font-bold">Telepon:</span> ${biodata.no}</p>
+              </div>
+            </div>
+          `;
+
+            // Event listener untuk membuka modal gambar
+            const mainPhoto = document.getElementById("main-photo");
+            mainPhoto.addEventListener("click", () => {
+              openModal(biodata.fotoformal);
+            });
+          } else {
+            console.error("Data dengan id 33 tidak ditemukan");
+          }
+        })
+        .catch((error) => console.error("Gagal mengambil data JSON:", error));
+
+      // Fungsi untuk menampilkan dan menyembunyikan daftar teman serta animasi loading
+      const lihatTemanBtn = document.getElementById("lihat-teman-btn");
+      const temanContainer = document.getElementById("daftar-teman");
+      const loadingSpinner = document.getElementById("loading-spinner");
+      let isVisible = false; // Flag untuk menyimpan status apakah daftar teman ditampilkan atau tidak
+
+      lihatTemanBtn.addEventListener("click", () => {
+        if (!isVisible) {
+          loadingSpinner.classList.remove("hidden");
+          fetch("data.json")
+            .then((response) => response.json())
+            .then((data) => {
+              temanContainer.innerHTML = "";
+              data
+                .filter((item) => item.id !== 33)
+                .forEach((teman) => {
+                  const temanCard = `
+                <div class="max-w-lg bg-white rounded-lg shadow-lg overflow-hidden">
+                  <div class="bg-green-500 h-48"></div>
+                  <div class="text-center p-8">
+                    <img class="w-40 h-40 rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${teman.fotoformal}" alt="Foto Profil" onclick="openModal('${teman.fotoformal}')"> <!-- Foto teman bisa diklik -->
+                    <h2 class="text-2xl font-semibold mt-6">${teman.nama}</h2>
+                    <p class="text-gray-600 mt-2">Kelompok: ${teman.kelompok}</p>
+                    <p class="text-gray-600">NIM: ${teman.nim}</p>
+                    <div class="mt-6">
+                      <p><span class="font-bold">TTL:</span> ${teman.ttl}</p>
+                      <p><span class="font-bold">Alamat:</span> ${teman.alamat}</p>
+                      <p><span class="font-bold">Telepon:</span> ${teman.no}</p>
+                    </div>
+                  </div>
+                </div>
+              `;
+                  temanContainer.innerHTML += temanCard;
+                });
+              temanContainer.classList.remove("hidden");
+              lihatTemanBtn.textContent = "Sembunyikan Daftar Teman";
+              loadingSpinner.classList.add("hidden");
+              isVisible = true;
+            })
+            .catch((error) => {
+              console.error("Gagal mengambil data JSON:", error);
+              loadingSpinner.classList.add("hidden");
+            });
+        } else {
+          temanContainer.classList.add("hidden");
+          lihatTemanBtn.textContent = "Lihat Daftar Teman";
+          isVisible = false;
+        }
+      });
+
+      // Fungsi untuk membuka modal gambar
+      function openModal(src) {
+        const modal = document.getElementById("photo-modal");
+        const modalImg = document.getElementById("modal-img");
+        modalImg.src = src;
+        modal.classList.remove("hidden");
+      }
+
+      // Fungsi untuk menutup modal gambar
+      const closeModal = document.getElementById("close-modal");
+      closeModal.addEventListener("click", () => {
+        const modal = document.getElementById("photo-modal");
+        modal.classList.add("hidden");
+      });
+    </script>
+  </body>
+</html>
