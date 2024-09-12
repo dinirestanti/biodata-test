@@ -24,20 +24,52 @@
           transform: rotate(360deg);
         }
       }
+
+      /* Gaya untuk tombol yang dinonaktifkan */
+      .disabled-btn {
+        background-color: #d1d5db; /* Warna abu-abu */
+        cursor: not-allowed; /* Tanda kursor tidak bisa diklik */
+      }
+
+      /* Animasi background */
+      body {
+        background: linear-gradient(
+          270deg,
+          #6e81ff,
+          #fad0c4,
+          #fad0c4,
+          #fcb69f,
+          #fcb69f
+        );
+        background-size: 1000% 1000%;
+        animation: gradientAnimation 15s ease infinite;
+      }
+
+      @keyframes gradientAnimation {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
     </style>
   </head>
-  <body class="bg-gray-100">
+  <body>
     <!-- Container utama -->
     <div class="container mx-auto p-4">
       <!-- Header -->
       <div class="text-center my-8">
-        <h1 class="text-4xl font-bold text-gray-800">Biodata</h1>
+        <h1 class="text-4xl font-bold text-gray-800">Biodata Ku</h1>
       </div>
 
       <!-- Card biodata -->
       <div
         id="biodata-card"
-        class="max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden"
+        class="max-w-lg mx-auto bg-white rounded-3xl shadow-xl overflow-hidden"
       >
         <!-- Foto Profil dan Detail akan dimasukkan secara dinamis -->
       </div>
@@ -57,7 +89,7 @@
       <!-- Section untuk menampilkan daftar teman, awalnya tersembunyi -->
       <div
         id="daftar-teman"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 hidden"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 ml-8 hidden"
       >
         <!-- Daftar teman akan dimasukkan di sini -->
       </div>
@@ -97,7 +129,7 @@
             cardContainer.innerHTML = `
             <div class="bg-blue-500 h-48"></div>
             <div class="text-center p-8">
-              <img id="main-photo" class="w-40 h-40 rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${biodata.fotoformal}" alt="Foto Profil"> <!-- Foto utama bisa diklik -->
+              <img id="main-photo" class="w-60 h-60 object-cover rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${biodata.fotoformal}" alt="Foto Profil"> <!-- Foto utama bisa diklik -->
               <h2 class="text-2xl font-semibold mt-6">${biodata.nama}</h2>
               <p class="text-gray-600 mt-2">Kelompok: ${biodata.kelompok}</p>
               <p class="text-gray-600">NIM: ${biodata.nim}</p>
@@ -106,6 +138,12 @@
                 <p><span class="font-bold">Alamat:</span> ${biodata.alamat}</p>
                 <p><span class="font-bold">Telepon:</span> ${biodata.no}</p>
               </div>
+              <h2 class="text-2xl font-semibold mt-6">Tentang Saya :</h2>
+              <p class="text-gray-600 mt-2">Hi, perkenalkan nama saya Dini Restanti Artamulya. Saya adalah
+          mahasiswa Teknik Informatika di Universitas Trunojoyo Madura (UTM).
+          Saya lahir di Jombang pada tanggal 18 September tahun 2006. Saat ini saya
+          tinggal di Kos bersama teman saya. Jika kalian membutuhkan
+          sesuatu dari saya, Anda bisa menghubungi di nomer telepon saya.</p>
             </div>
           `;
 
@@ -136,11 +174,14 @@
               data
                 .filter((item) => item.id !== 33)
                 .forEach((teman) => {
+                  const webButton = teman.web
+                    ? `<a href="${teman.web}" target="_blank" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Kunjungi Web</a>`
+                    : `<button class="mt-4 bg-gray-400 text-white font-bold py-2 px-4 rounded disabled-btn" disabled>Kunjungi Web</button>`;
                   const temanCard = `
-                <div class="max-w-lg bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="max-w-lg bg-white rounded-3xl shadow-xl overflow-hidden">
                   <div class="bg-green-500 h-48"></div>
                   <div class="text-center p-8">
-                    <img class="w-40 h-40 rounded-full mx-auto -mt-24 border-4 border-white cursor-pointer" src="${teman.fotoformal}" alt="Foto Profil" onclick="openModal('${teman.fotoformal}')"> <!-- Foto teman bisa diklik -->
+                    <img class="w-40 h-40 rounded-full mx-auto -mt-24 border-4 object-cover border-white cursor-pointer" src="${teman.fotoformal}" alt="Foto Profil" onclick="openModal('${teman.fotoformal}')"> <!-- Foto teman bisa diklik -->
                     <h2 class="text-2xl font-semibold mt-6">${teman.nama}</h2>
                     <p class="text-gray-600 mt-2">Kelompok: ${teman.kelompok}</p>
                     <p class="text-gray-600">NIM: ${teman.nim}</p>
@@ -149,6 +190,7 @@
                       <p><span class="font-bold">Alamat:</span> ${teman.alamat}</p>
                       <p><span class="font-bold">Telepon:</span> ${teman.no}</p>
                     </div>
+                    ${webButton} <!-- Tombol Kunjungi Web -->
                   </div>
                 </div>
               `;
